@@ -30,6 +30,11 @@ class verification {
       return stock[`${order}`] > 0;
     }
   };
+  checkSize = (order, size) => {
+    if (order === "shirt") {
+      return size === "undefined";
+    }
+  };
 }
 
 const doubleCheck = new verification();

@@ -7,15 +7,40 @@ const morgan = require("morgan");
 const { doubleCheck } = require("./data/verification");
 
 const handleForm = (req, res) => {
-  const { address, email, surname, givenName, country, order, size } = req.body;
-  const entries = Object.values(req.body);
-  const invalidEntry = entries.includes("undefined");
+  const {
+    address,
+    email,
+    surname,
+    givenName,
+    country,
+    order,
+    size,
+    city,
+    province,
+    postCode,
+  } = req.body;
+  const mainEntries = [
+    address,
+    email,
+    surname,
+    givenName,
+    country,
+    order,
+    city,
+    province,
+    postCode,
+  ];
+  const invalidEntry = mainEntries.includes("undefined");
   const validCountry = doubleCheck.checkCountry(country);
   const invalidAddress = doubleCheck.checkAddress(address);
   const invalidName = doubleCheck.checkName(givenName, surname);
   const invalidEmail = doubleCheck.checkEmail(email);
   const isInStock = doubleCheck.checkStock(order, size);
+  const sizeNotChecked = doubleCheck.checkSize(order, size);
+  console.log(size);
   if (invalidEntry) {
+    res.json({ status: "error", error: "missing-data" });
+  } else if (sizeNotChecked) {
     res.json({ status: "error", error: "missing-data" });
   } else if (!validCountry) {
     res.json({ status: "error", error: "undeliverable" });
@@ -26,6 +51,9 @@ const handleForm = (req, res) => {
   } else {
     res.json({ status: "success" });
   }
+};
+const formSent = (req, res) => {
+  res.render("/pages/order-confirmation");
 };
 
 express()
@@ -45,6 +73,6 @@ express()
 
   // endpoints
   .post("/order", handleForm)
-  .get("/order-confirmed")
+  // .get("/order-confirmed", formSent)
   .get("*", (req, res) => res.send("Dang. 404."))
   .listen(8000, () => console.log(`Listening on port 8000`));
