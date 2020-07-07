@@ -8,12 +8,16 @@ const { doubleCheck } = require("./data/verification");
 
 const handleForm = (req, res) => {
   const { address, email, surname, givenName, country, order, size } = req.body;
+  const entries = Object.values(req.body);
+  const invalidEntry = entries.includes("undefined");
   const validCountry = doubleCheck.checkCountry(country);
   const invalidAddress = doubleCheck.checkAddress(address);
   const invalidName = doubleCheck.checkName(givenName, surname);
   const invalidEmail = doubleCheck.checkEmail(email);
   const isInStock = doubleCheck.checkStock(order, size);
-  if (!validCountry) {
+  if (invalidEntry) {
+    res.json({ status: "error", error: "missing-data" });
+  } else if (!validCountry) {
     res.json({ status: "error", error: "undeliverable" });
   } else if (invalidAddress || invalidEmail || invalidName) {
     res.json({ status: "error", error: "repeat-customer" });
@@ -41,5 +45,6 @@ express()
 
   // endpoints
   .post("/order", handleForm)
+  .get("/order-confirmed")
   .get("*", (req, res) => res.send("Dang. 404."))
   .listen(8000, () => console.log(`Listening on port 8000`));
