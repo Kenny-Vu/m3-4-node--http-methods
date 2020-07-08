@@ -6,6 +6,10 @@ const morgan = require("morgan");
 
 const { doubleCheck } = require("./data/verification");
 
+let userName = "";
+let item = "";
+let userProvince = "";
+
 const handleForm = (req, res) => {
   const {
     address,
@@ -50,10 +54,24 @@ const handleForm = (req, res) => {
     res.json({ status: "error", error: "unavailable" });
   } else {
     res.json({ status: "success" });
+    userName = givenName;
+    item = order;
+    userProvince = province;
   }
 };
 const formSent = (req, res) => {
-  res.render("/pages/order-confirmation");
+  let name = userName;
+  let product = item;
+  let province = userProvince;
+  if (name && product && province) {
+    res.render("pages/order-confirmation", { name, product, province });
+  } else {
+    res.render("pages/order-confirmation", {
+      name: "dear customer",
+      product: "order",
+      province: "your city",
+    });
+  }
 };
 
 express()
@@ -73,6 +91,6 @@ express()
 
   // endpoints
   .post("/order", handleForm)
-  // .get("/order-confirmed", formSent)
+  .get("/order-confirmed", formSent)
   .get("*", (req, res) => res.send("Dang. 404."))
   .listen(8000, () => console.log(`Listening on port 8000`));

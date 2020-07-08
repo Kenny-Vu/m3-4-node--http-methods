@@ -1,9 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body></body>
+<%- include("../partials/head")%>
+  <body>
+    <div class="message-background">
+      <div class="message-box">
+        <p class="message">Thanks for ordering <%- name%>! Your <%-product%> will be sent to your home in <%-province%> soon. Thank you for participating! </p>
+        <div class="truck"><i class="fas fa-truck"></i></div>
+      </div>
+    </div>
+  </body>
 </html>
